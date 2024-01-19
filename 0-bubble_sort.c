@@ -1,10 +1,12 @@
 #include "sort.h"
 
 /**
- * bubble_sort - sort list with bubble
- * @array: The array to be printed
- * @size: Number of elements in @array
- */
+ * bubble_sort - sorts an array using the bubble sort algorithm.
+ * @array: the array to be sorted.
+ * @size: the number of elements in the array.
+ *
+ * Description: This function employs the bubble sort algorithm.
+*/
 void bubble_sort(int *array, size_t size)
 {
 	size_t iNum = 0, iTmp = size;

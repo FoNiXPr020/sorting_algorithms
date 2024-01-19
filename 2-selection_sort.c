@@ -1,10 +1,12 @@
 #include "sort.h"
 
 /**
- * selection_sort - sort list with selection_sort
- * @array: The array to be printed
- * @size: Number of elements in @array
- */
+ * selection_sort - sorts an array using the selection sort algorithm.
+ * @array: the array to be sorted.
+ * @size: the number of elements in the array.
+ *
+ * Description: This function employs the selection sort algorithm.
+*/
 void selection_sort(int *array, size_t size)
 {
 	size_t iNum, iCer, iLess, iTemp, iSwap;
