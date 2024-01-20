@@ -1,72 +1,97 @@
 #include "sort.h"
 
+void swap_ahead(listint_t **engine, listint_t **list, listint_t **algo);
+void swap_behind(listint_t **engine, listint_t **list, listint_t **algo);
+
 /**
- * swap_nodes - Swap the positions of two nodes in a doubly linked list.
- * @current: Pointer to the first node to be swapped.
- * @curr_old: Pointer to the second node to be swapped.
- * @list: Doubly linked list containing the nodes.
- *
- * Description: This function swaps the positions of two nodes in a doubly
- * linked list.
+ * swap_ahead - Swap a node in a listint_t
+ * doubly-linked list with its next node.
+ * @engine: Pointer to the head of a doubly-linked list.
+ * @list: Pointer to the tail of the list.
+ * @algo: Pointer to the current node in the Cocktail Shaker algorithm.
  */
-void swap_nodes(listint_t *current, listint_t *curr_old, listint_t **list)
+void swap_ahead(listint_t **engine, listint_t **list, listint_t **algo)
 {
-	listint_t *iTemp1 = current->next;
-	listint_t *itemp2 = curr_old->prev;
+	listint_t *iTemp = (*algo)->next;
 
-	if (iTemp1 != NULL)
-		iTemp1->prev = curr_old;
-	if (itemp2 != NULL)
-		itemp2->next = current;
-
-	current->prev = itemp2;
-	curr_old->next = iTemp1;
-	current->next = curr_old;
-	curr_old->prev = current;
-
-	if (*list == curr_old)
-		*list = current;
-	print_list(*list);
+	if ((*algo)->prev != NULL)
+		(*algo)->prev->next = iTemp;
+	else
+		*engine = iTemp;
+	iTemp->prev = (*algo)->prev;
+	(*algo)->next = iTemp->next;
+	if (iTemp->next != NULL)
+		iTemp->next->prev = *algo;
+	else
+		*list = *algo;
+	(*algo)->prev = iTemp;
+	iTemp->next = *algo;
+	*algo = iTemp;
 }
 
 /**
- * cocktail_sort_list - Sorts a doubly
- * linked list using the Cocktail Shaker sort.
- * @list: The doubly linked list to be sorted.
- *
- * Description: This function implements the Cocktail Shaker sort algorithm
- * on a doubly linked list.
+ * swap_behind - Swap a node in a listint_t doubly-linked
+ * list of integers with the node behind it.
+ * @engine: A pointer to the head of a doubly-linked list of integers.
+ * @list: A pointer to the tail of the doubly-linked list.
+ * @algo: A pointer to the current swapping node of the cocktail shaker algo.
  */
+void swap_behind(listint_t **engine, listint_t **list, listint_t **algo)
+{
+	listint_t *iTemp = (*algo)->prev;
 
+	if ((*algo)->next != NULL)
+		(*algo)->next->prev = iTemp;
+	else
+		*list = iTemp;
+	iTemp->next = (*algo)->next;
+	(*algo)->prev = iTemp->prev;
+	if (iTemp->prev != NULL)
+		iTemp->prev->next = *algo;
+	else
+		*engine = *algo;
+	(*algo)->next = iTemp;
+	iTemp->prev = *algo;
+	*algo = iTemp;
+}
+
+/**
+ * cocktail_sort_list - Sorts a list of integers in ascending order
+ * using the Cocktail Shaker algorithm.
+ * @list: Pointer to the head of a list of integers.
+ */
 void cocktail_sort_list(listint_t **list)
 {
-	listint_t *engine = *list, *start = NULL, *end = NULL;
+	listint_t *iTemp, *algo;
+	int algo_not_stirred = 0;
 
-	if (!list)
+	if (list == NULL || *list == NULL || (*list)->next == NULL)
 		return;
 
-	if (!(*list))
-		return;
+	for (iTemp = *list; iTemp->next != NULL;)
+		iTemp = iTemp->next;
 
-	if (!(*list)->next)
-		return;
-
-	do {
-		while (engine->next)
+	while (algo_not_stirred == 0)
+	{
+		algo_not_stirred = 1;
+		for (algo = *list; algo != iTemp; algo = algo->next)
 		{
-			if (engine->n > engine->next->n)
-				swap_nodes(engine->next, engine, list);
-			else
-				engine = engine->next;
+			if (algo->n > algo->next->n)
+			{
+				swap_ahead(list, &iTemp, &algo);
+				print_list((const listint_t *)*list);
+				algo_not_stirred = 0;
+			}
 		}
-		end = engine;
-		while (engine->prev != start)
+		for (algo = algo->prev; algo != *list;
+				algo = algo->prev)
 		{
-			if (engine->n < engine->prev->n)
-				swap_nodes(engine, engine->prev, list);
-			else
-				engine = engine->prev;
+			if (algo->n < algo->prev->n)
+			{
+				swap_behind(list, &iTemp, &algo);
+				print_list((const listint_t *)*list);
+				algo_not_stirred = 0;
+			}
 		}
-		start = engine;
-	} while (start != end);
+	}
 }
